@@ -1,9 +1,5 @@
 var Clarity = function () {
   this.start_time = performance.now();
-   
-  this.socket.on("players", (players) => {
-    game.handleLobby(players);
-  })
   this.id = false;
   this.alert_errors = false;
   this.log_info = true;
@@ -11,8 +7,6 @@ var Clarity = function () {
   this.limit_viewport = false;
   this.jump_switch = 0;
   this.allowSpecialJump = true;
-  this.deathmsgs = true;
-  this.checkpoint = false;
 
   this.viewport = {
     x: 200,
@@ -107,9 +101,9 @@ Clarity.prototype.keyup = function (e) {
 };
 
 Clarity.prototype.load_map = function (map) {
-  if (typeof map === 'undefined'
-    || typeof map.data === 'undefined'
-    || typeof map.keys === 'undefined') {
+  if (typeof map === 'undefined' ||
+    typeof map.data === 'undefined' ||
+    typeof map.keys === 'undefined') {
 
     this.error('Error: Invalid map data!');
 
@@ -120,52 +114,16 @@ Clarity.prototype.load_map = function (map) {
   this.current_map = map;
 
   this.current_map.background = map.background || '#333';
-  this.current_map.gravity = map.gravity || { x: 0, y: 0.3 };
+  this.current_map.gravity = map.gravity || {
+    x: 0,
+    y: 0.3
+  };
   this.tile_size = map.tile_size || 16;
 
   var _this = this;
 
   this.current_map.width = 0;
   this.current_map.height = 0;
-
-
-  var spawnfound = false;
-  var spawnx;
-  var spawny;
-  map.keys.forEach(function (key) {
-
-    map.data.forEach(function (row, y) {
-
-      _this.current_map.height = Math.max(_this.current_map.height, y);
-      
-      Array.prototype.forEach.call(row, function (tile, x) {
-        if (tile == 20 || tile.id == 20){
-          spawnfound = true;
-          spawnx = x;
-          spawny = y;
-        }
-        
-        if (tile == 25 || tile.id == 25){
-          this.coinList.push([spawnx, spawny])
-        }
-        
-        _this.current_map.width = Math.max(_this.current_map.width, x);
-
-        if (tile == key.id)
-          _this.current_map.data[y][x] = key;
-      });
-    });
-  });
-
-  if (!this.checkpoint){
-    if (!spawnfound) {
-      this.current_map.player.x = 1
-      this.current_map.player.y = 1
-    } else {
-      this.current_map.player.x = spawnx;
-      this.current_map.player.y = spawny;
-    }
-  }
 
 
   this.current_map.width_p = this.current_map.width * this.tile_size;
@@ -199,27 +157,17 @@ Clarity.prototype.get_tile = function (x, y) {
 Clarity.prototype.draw_tile = function (x, y, tile, context) {
 
   if (!tile || !tile.colour) return;
-  if(!tile.img){
-    // console.log("no image!")
-      context.fillStyle = tile.colour;
-  context.fillRect(
-    x,
-    y,
-    this.tile_size,
-    this.tile_size
-  );
+  if (!tile.img) {
+    context.fillStyle = tile.colour;
+    context.fillRect(
+      x,
+      y,
+      this.tile_size,
+      this.tile_size
+    );
   } else {
     ctx.drawImage(tile.img, x, y, this.tile_size, this.tile_size);
   }
-  
-
-  // context.fillStyle = tile.colour;
-  // context.fillRect(
-  //   x,
-  //   y,
-  //   this.tile_size,
-  //   this.tile_size
-  // );
 };
 
 Clarity.prototype.draw_map = function (context, fore) {
@@ -233,10 +181,10 @@ Clarity.prototype.draw_map = function (context, fore) {
         var t_x = (x * this.tile_size) - this.camera.x;
         var t_y = (y * this.tile_size) - this.camera.y;
 
-        if (t_x < -this.tile_size
-          || t_y < -this.tile_size
-          || t_x > this.viewport.x
-          || t_y > this.viewport.y) continue;
+        if (t_x < -this.tile_size ||
+          t_y < -this.tile_size ||
+          t_x > this.viewport.x ||
+          t_y > this.viewport.y) continue;
 
         this.draw_tile(
           t_x,
@@ -263,17 +211,8 @@ Clarity.prototype.move_player = function () {
     Math.round(this.player.loc.y / this.tile_size)
   );
 
-  if (tile.boost && !this.universalSpeed) {
-    this.current_map.movement_speed.left = 1;
-    this.current_map.movement_speed.right = 1;
-  } else if(!this.universalSpeed) {
-    this.current_map.movement_speed =  { jump: 6, left: 0.3, right: 0.3 };
-  } else if(this.universalSpeed){
-    this.current_map.movement_speed =  { jump: 10, left: 10, right: 10 };
-  }
 
-  
-  
+
   if (tile.gravity) {
 
     this.player.vel.x += tile.gravity.x;
@@ -289,7 +228,7 @@ Clarity.prototype.move_player = function () {
     this.player.vel.x *= tile.friction.x;
     this.player.vel.y *= tile.friction.y;
     this.current_map.vel_limit.x = 15.8;
-  } else if (this.detectBelow(17)){
+  } else if (this.detectBelow(17)) {
     this.player.vel.x *= 1.10;
     this.current_map.vel_limit.x = 12;
   }
@@ -315,24 +254,12 @@ Clarity.prototype.move_player = function () {
   var right1 = this.get_tile(t_x_right, y_near1);
   var right2 = this.get_tile(t_x_right, y_near2);
 
-
-  if (this.detectSides(18).result){
-    // make player fall slowly
-    this.player.vel.y *= 0.8;
-  }
-
   if (tile.jump && this.jump_switch > 15) {
 
     this.player.can_jump = true;
 
     this.jump_switch = 0;
 
-  } else this.jump_switch++;
-
-  if (this.detectSides(18).result && this.jump_switch > 15) {
-    this.player.can_jump = true;
-
-    this.jump_switch = 0;
   } else this.jump_switch++;
 
   this.player.vel.x = Math.min(Math.max(this.player.vel.x, -this.current_map.vel_limit.x), this.current_map.vel_limit.x);
@@ -347,12 +274,12 @@ Clarity.prototype.move_player = function () {
 
     /* fix overlap */
 
-    while (this.get_tile(Math.floor(this.player.loc.x / this.tile_size), y_near1).solid
-      || this.get_tile(Math.floor(this.player.loc.x / this.tile_size), y_near2).solid)
+    while (this.get_tile(Math.floor(this.player.loc.x / this.tile_size), y_near1).solid ||
+      this.get_tile(Math.floor(this.player.loc.x / this.tile_size), y_near2).solid)
       this.player.loc.x += 0.1;
 
-    while (this.get_tile(Math.ceil(this.player.loc.x / this.tile_size), y_near1).solid
-      || this.get_tile(Math.ceil(this.player.loc.x / this.tile_size), y_near2).solid)
+    while (this.get_tile(Math.ceil(this.player.loc.x / this.tile_size), y_near1).solid ||
+      this.get_tile(Math.ceil(this.player.loc.x / this.tile_size), y_near2).solid)
       this.player.loc.x -= 0.1;
 
     /* tile bounce */
@@ -372,12 +299,12 @@ Clarity.prototype.move_player = function () {
 
     /* fix overlap */
 
-    while (this.get_tile(x_near1, Math.floor(this.player.loc.y / this.tile_size)).solid
-      || this.get_tile(x_near2, Math.floor(this.player.loc.y / this.tile_size)).solid)
+    while (this.get_tile(x_near1, Math.floor(this.player.loc.y / this.tile_size)).solid ||
+      this.get_tile(x_near2, Math.floor(this.player.loc.y / this.tile_size)).solid)
       this.player.loc.y += 0.1;
 
-    while (this.get_tile(x_near1, Math.ceil(this.player.loc.y / this.tile_size)).solid
-      || this.get_tile(x_near2, Math.ceil(this.player.loc.y / this.tile_size)).solid)
+    while (this.get_tile(x_near1, Math.ceil(this.player.loc.y / this.tile_size)).solid ||
+      this.get_tile(x_near2, Math.ceil(this.player.loc.y / this.tile_size)).solid)
       this.player.loc.y -= 0.1;
 
     /* tile bounce */
@@ -462,20 +389,11 @@ Clarity.prototype.move_player = function () {
   }
 
   this.last_tile = tile.id;
-
-  // Emit event to server
-  if(this.id && this.multiplayer){
-    if(!signedin()){
-      window.location.href="https://discountdevs.github.io/Clarity/";
-    }
-    this.socket.emit("move", this.id, {x: this.player.loc.x, y: this.player.loc.y}, signedin());
-  }
-
 };
 
 Clarity.prototype.update_player = function () {
 
-  if (this.isInside(25)){
+  if (this.isInside(25)) {
 
   }
 
@@ -485,48 +403,18 @@ Clarity.prototype.update_player = function () {
       this.player.vel.x -= this.current_map.movement_speed.left;
   }
 
-// 1. If the player presses the up arrow, then check if they can jump.
-// 2. If the player can jump, then check if they're touching a wall.
-// 3. If they are, then check if they are jumping off a wall to the right or left.
-// 4. If they are, then change the player's velocity to be able to jump off the wall.
-// 5. If they are not, then simply change the player's velocity to be able to jump.
-// 6. If the player can't jump, then do nothing. 
+  // 1. If the player presses the up arrow, then check if they can jump.
+  // 2. If the player can jump, then check if they're touching a wall.
+  // 3. If they are, then check if they are jumping off a wall to the right or left.
+  // 4. If they are, then change the player's velocity to be able to jump off the wall.
+  // 5. If they are not, then simply change the player's velocity to be able to jump.
+  // 6. If the player can't jump, then do nothing. 
   if (this.key.up) {
 
-    if (this.player.can_jump && this.player.vel.y > -this.current_map.vel_limit.y ) {
-      if (this.detectSides(18).result && !this.isGroundSolid()){
-
-        if(this.allowSpecialJump){
-          this.allowSpecialJump = false;
-
-          if(this.detectSides(18).side == "left"){
-            // Bump player off wall to the right using velocity
-            this.player.vel.x += this.current_map.movement_speed.jump;
-          } else {
-            // Same thing, but to the left
-            this.player.vel.x -= this.current_map.movement_speed.jump;
-          }
-          this.player.vel.y -= this.current_map.movement_speed.jump;
-  
-        }
-      } else {
-          if (this.isInside(3) || this.isInside(12)|| this.isInside(14)|| this.isInside(15)){
-            
-            if(this.allowSpecialJump){
-              this.allowSpecialJump = false;
-
-              this.player.vel.y -= this.current_map.movement_speed.jump;
-            }
-          } else {
-            this.player.vel.y -= this.current_map.movement_speed.jump;
-          }
-          
-      }
-      
+    if (this.player.can_jump && this.player.vel.y > -this.current_map.vel_limit.y) {
+      this.player.vel.y -= this.current_map.movement_speed.jump;
       this.player.can_jump = false;
     }
-  } else {
-    this.allowSpecialJump = true;
   }
 
 
@@ -556,10 +444,10 @@ Clarity.prototype.draw_player = function (context) {
 
   context.fill();
 
-  if(this.debug){
+  if (this.debug) {
     context.strokeRect(
-      this.player.loc.x + this.tile_size / 2 - this.camera.x - this.tile_size/2,
-      this.player.loc.y + this.tile_size / 2 - this.camera.y  - this.tile_size/2,
+      this.player.loc.x + this.tile_size / 2 - this.camera.x - this.tile_size / 2,
+      this.player.loc.y + this.tile_size / 2 - this.camera.y - this.tile_size / 2,
       this.tile_size,
       this.tile_size
     )
@@ -589,10 +477,10 @@ Clarity.prototype.draw_other_player = function (context, x, y, username) {
 
   context.fill();
 
-  if(this.debug){
+  if (this.debug) {
     context.strokeRect(
-      x + this.tile_size / 2 - this.camera.x - this.tile_size/2,
-      y + this.tile_size / 2 - this.camera.y  - this.tile_size/2,
+      x + this.tile_size / 2 - this.camera.x - this.tile_size / 2,
+      y + this.tile_size / 2 - this.camera.y - this.tile_size / 2,
       this.tile_size,
       this.tile_size
     )
@@ -600,8 +488,8 @@ Clarity.prototype.draw_other_player = function (context, x, y, username) {
 }
 
 Clarity.prototype.update = function () {
-  if(this.debug){
-    document.getElementById("debugmenu2").innerHTML = "X pos: "+this.player.loc.x.toFixed(1) + "<br>Y pos: "+this.player.loc.y.toFixed(1)
+  if (this.debug) {
+    document.getElementById("debugmenu2").innerHTML = "X pos: " + this.player.loc.x.toFixed(1) + "<br>Y pos: " + this.player.loc.y.toFixed(1)
   } else {
     document.getElementById("debugmenu2").innerText = "";
   }
@@ -613,7 +501,7 @@ Clarity.prototype.draw = function (context) {
   this.draw_map(context, false);
   var _this = this;
   for (const username in _this.current_lobby) {
-    if (username != signedin()){
+    if (username != signedin()) {
       var pos = _this.current_lobby[username];
       _this.draw_other_player(context, pos.x, pos.y, username);
     }
@@ -624,83 +512,95 @@ Clarity.prototype.draw = function (context) {
 
 const clamp = (num, min, max) => Math.min(Math.max(num, min), max);
 
-Clarity.prototype.detectBelow = function (id){
+Clarity.prototype.detectBelow = function (id) {
   var map = this.current_map.data;
-  var playerX = Math.round(this.player.loc.x/16);
-  var playerY = Math.round(this.player.loc.y/16);
+  var playerX = Math.round(this.player.loc.x / 16);
+  var playerY = Math.round(this.player.loc.y / 16);
 
-  if (playerY >= map.length-1 || playerX >= map.length){
+  if (playerY >= map.length - 1 || playerX >= map.length) {
     return false;
-  } else if (playerY < 0 || playerX < 0){
+  } else if (playerY < 0 || playerX < 0) {
     return false;
   }
 
 
-  var tile = map[playerY+1][playerX];
+  var tile = map[playerY + 1][playerX];
 
   return tile.id == id;
 }
 
-Clarity.prototype.detectSides = function (id){
+Clarity.prototype.detectSides = function (id) {
   var map = this.current_map.data;
-  var playerX = Math.round(this.player.loc.x/16);
-  var playerY = Math.round(this.player.loc.y/16);
+  var playerX = Math.round(this.player.loc.x / 16);
+  var playerY = Math.round(this.player.loc.y / 16);
 
-  if (playerY >= map.length-1 || playerX >= map.length-1){
+  if (playerY >= map.length - 1 || playerX >= map.length - 1) {
     return false;
   }
-  if (playerY <= 1 || playerX <= 1){
-    return false;
-  }
-
-  if (playerX+1 > map.length-1){
-    return false;
-  }
-  if (playerX-1 < 1){
+  if (playerY <= 1 || playerX <= 1) {
     return false;
   }
 
-  var tileA = map[playerY][playerX+1];
-  var tileB = map[playerY][playerX-1];
+  if (playerX + 1 > map.length - 1) {
+    return false;
+  }
+  if (playerX - 1 < 1) {
+    return false;
+  }
+
+  var tileA = map[playerY][playerX + 1];
+  var tileB = map[playerY][playerX - 1];
 
 
 
   var isDetected = false;
   var sideDetected;
-  if (tileA.id == id){
+  if (tileA.id == id) {
     sideDetected = "right";
     isDetected = true;
-  } else if (tileB.id == id){
+  } else if (tileB.id == id) {
     sideDetected = "left";
     isDetected = true;
   }
 
-  var unroundX = this.player.loc.x/16;
-  
-  if (sideDetected == "right"){
-    if (Math.round(unroundX + 0.6) == playerX + 1 && isDetected){
-      return {result: true, side: "right"};
+  var unroundX = this.player.loc.x / 16;
+
+  if (sideDetected == "right") {
+    if (Math.round(unroundX + 0.6) == playerX + 1 && isDetected) {
+      return {
+        result: true,
+        side: "right"
+      };
     } else {
-      return {result: false, side: null};
+      return {
+        result: false,
+        side: null
+      };
     }
   } else {
-    if (Math.round(unroundX - 0.6) == playerX - 1 && isDetected){
-      return {result: true, side: "left"};
+    if (Math.round(unroundX - 0.6) == playerX - 1 && isDetected) {
+      return {
+        result: true,
+        side: "left"
+      };
     } else {
-      return {result: false, side: null};
+      return {
+        result: false,
+        side: null
+      };
     }
   }
-  
+
 
 }
 
-Clarity.prototype.isInside = function (id){
+Clarity.prototype.isInside = function (id) {
   var map = this.current_map.data;
-  var playerX = Math.round(this.player.loc.x/16);
-  var playerY = Math.round(this.player.loc.y/16);
-  if (playerY >= map.length || playerX >= map.length){
+  var playerX = Math.round(this.player.loc.x / 16);
+  var playerY = Math.round(this.player.loc.y / 16);
+  if (playerY >= map.length || playerX >= map.length) {
     return false;
-  } else if (playerY < 0 || playerX < 0){
+  } else if (playerY < 0 || playerX < 0) {
     return false;
   }
 
@@ -709,22 +609,22 @@ Clarity.prototype.isInside = function (id){
   return tile.id == id
 }
 
-Clarity.prototype.getBelow = function (){
+Clarity.prototype.getBelow = function () {
   var map = this.current_map.data;
-  var playerX = Math.round(this.player.loc.x/16);
-  var playerY = Math.round(this.player.loc.y/16);
+  var playerX = Math.round(this.player.loc.x / 16);
+  var playerY = Math.round(this.player.loc.y / 16);
 
-  if (playerY >= map.length-1 || playerX >= map.length){
+  if (playerY >= map.length - 1 || playerX >= map.length) {
     return false;
-  } else if (playerY < 0 || playerX < 0){
+  } else if (playerY < 0 || playerX < 0) {
     return false;
   }
 
-  var tile = map[playerY+1][playerX];
+  var tile = map[playerY + 1][playerX];
 
   return tile;
 }
 
-Clarity.prototype.isGroundSolid = function (){
+Clarity.prototype.isGroundSolid = function () {
   return this.getBelow().solid;
 }
