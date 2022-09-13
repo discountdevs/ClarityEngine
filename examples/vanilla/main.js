@@ -291,6 +291,10 @@ window.map = {
         x: 0,
         y: 0.1
       },
+      friction: {
+        x: 1.10,
+        y: 0
+      },
       jump: 1,
       img: iceimg,
       blockname: "slippery stuff"
@@ -771,19 +775,19 @@ window.map = {
 		  game.player.vel.y -= game.current_map.movement_speed.jump;
   
 		}
-	  } else {
-		  if (game.isInside(3) || game.isInside(12)|| game.isInside(14)|| game.isInside(15)){
-			
-			if(game.allowSpecialJump){
-			  game.allowSpecialJump = false;
+  } else {
+    if (game.isInside(3) || game.isInside(12)|| game.isInside(14)|| game.isInside(15)){
+    
+    if(game.allowSpecialJump){
+      game.allowSpecialJump = false;
 
-			  game.player.vel.y -= game.current_map.movement_speed.jump;
-			}
-		  } else {
-			game.player.vel.y -= game.current_map.movement_speed.jump;
-		  }
-		  
-	  }
+      game.player.vel.y -= game.current_map.movement_speed.jump;
+    }
+    } else {
+    game.player.vel.y -= game.current_map.movement_speed.jump;
+    }
+    
+  }
 	  
 	  game.player.can_jump = false;
   },

@@ -7,9 +7,9 @@ var Clarity = function () {
   this.limit_viewport = false;
   this.jump_switch = 0;
   this.allowSpecialJump = true;
-  this.deathmsgs = true;
+  this.deathmsgs = true; // Legacy var, not needed immediately
   this.checkpoint = false;
-  this.legacyMap = true;
+  this.legacyMap = true; // Legacy map by default
 
   this.viewport = {
     x: 200,
@@ -289,10 +289,16 @@ Clarity.prototype.move_player = function () {
   if (tile.friction) {
     this.player.vel.x *= tile.friction.x;
     this.player.vel.y *= tile.friction.y;
-    this.current_map.vel_limit.x = 15.8;
-  } else if (this.detectBelow(17)){
-    this.player.vel.x *= 1.10;
-    this.current_map.vel_limit.x = 12;
+  }
+  if (this.detectBelow(17)){
+    if (this.legacyMap){
+      this.player.vel.x *= 1.10; // Legacy Ice Scripts
+      this.current_map.vel_limit.x = 12;
+    }
+  } else {
+    if (this.legacyMap){
+      this.current_map.vel_limit.x = 16;
+    }
   }
 
 
@@ -473,16 +479,24 @@ Clarity.prototype.move_player = function () {
 Clarity.prototype.update_player = function () {
 
   if (this.key.left) {
-    if (this.player.vel.x > -this.current_map.vel_limit.x)
-      this.player.vel.x -= this.current_map.movement_speed.left;
+    if (this.current_map.leftkeyhook){
+      this.current_map.leftkeyhook();
+    } else {
+      if (this.player.vel.x > -this.current_map.vel_limit.x)
+        this.player.vel.x -= this.current_map.movement_speed.left;
+    }
   }
 
-// 1. If the player presses the up arrow, then check if they can jump.
-// 2. If the player can jump, then check if they're touching a wall.
-// 3. If they are, then check if they are jumping off a wall to the right or left.
-// 4. If they are, then change the player's velocity to be able to jump off the wall.
-// 5. If they are not, then simply change the player's velocity to be able to jump.
-// 6. If the player can't jump, then do nothing. 
+  if (this.key.right) {
+    if (this.current_map.rightkeyhook){
+      this.current_map.rightkeyhook();
+    } else {
+      if (this.player.vel.x < this.current_map.vel_limit.x)
+        this.player.vel.x += this.current_map.movement_speed.left;
+    }
+  }
+
+  // Legacy walljump scripts ////////////////////////////////
   if (this.legacyMap) {
     if (this.key.up) {
 
@@ -535,13 +549,7 @@ Clarity.prototype.update_player = function () {
       this.allowSpecialJump = true;
     }
   }
-
-  if (this.key.right) {
-
-    if (this.player.vel.x < this.current_map.vel_limit.x)
-      this.player.vel.x += this.current_map.movement_speed.left;
-  }
-  // this.update_position();
+  // End legacy scripts /////////////////////////////////////////////////////
   this.move_player();
 };
 
@@ -706,7 +714,7 @@ Clarity.prototype.isInside = function (id){
 
   var tile = map[playerY][playerX];
 
-  return tile.id == id
+  return tile.id == id;
 }
 
 Clarity.prototype.getBelow = function (){
