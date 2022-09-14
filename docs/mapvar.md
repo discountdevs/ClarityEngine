@@ -1,4 +1,4 @@
-# Mapvar Properities in the Clarity Engine
+# Mapvar Properities
 
 ### Reminders
 Every mapvar starts with textures. If your map does not have textures, you can skip this step. Textures are not limited in resolution, but must be square. Textures are created by encoding a `png` image to base64, and creating a list like this:
