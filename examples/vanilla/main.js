@@ -120,7 +120,7 @@ window.map = {
     {
       id: 3,
       colour: "rgba(121, 220, 242, 0.4)",
-      friction: {
+      interior_friction: {
         x: 0.9,
         y: 0.9
       },
@@ -210,7 +210,7 @@ window.map = {
     {
       id: 12,
       colour: "rgba(121, 220, 242, 0.4)",
-      friction: {
+      interior_friction: {
         x: 0.9,
         y: 0.95
       },
@@ -237,7 +237,7 @@ window.map = {
     {
       id: 14,
       colour: "#453a4f",
-      friction: {
+      interior_friction: {
         x: 0.3,
         y: 0.1
       },
@@ -254,7 +254,7 @@ window.map = {
     {
       id: 15,
       colour: "#edb06e",
-      friction: {
+      interior_friction: {
         x: 0.6,
         y: 0.5
       },

@@ -51,7 +51,8 @@ There are many sub-attributes that can be added to tiles. They are covered below
   - `fore` - A (broken) attribute that renders this tile in front of the player. Generally reccomended for transparent blocks that are non-solid.
   - `jump` - Defines if the player can infinitely jump inside the tile. Only works if `solid: 0`. Possible values: `0`, `1`.
   - `gravity` - Defines the gravity the player experiences inside the tile. This overrides the default gravity of the map. Once the player exits the tile, the map gravity is set back to the normal value. The gravity variable is structured in the exact same manner as the mapvar `gravity` property.
-  - `friction` - Defines the friction of the tile. `0` is infinite friction (no movement) and anything above `3` is insane speed. The reccomended value for a slippery tile is `1.10`.
+  - `friction` - Defines the friction of the player on top of tile. `0` is infinite friction (no movement) and anything above `3` is insane speed. The reccomended value for a slippery tile is `1.10`.
+  - `interior_friction` - Defines the friction of the player while passing through the tile.
   - `script` - Defines the script in the `scripts` section of your mapvar to run when the player walks into this tile. Formatted as a string. Looks for a script of the same name in the `scripts` section and executes it.
 
  - ### `data`

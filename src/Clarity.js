@@ -286,9 +286,13 @@ Clarity.prototype.move_player = function () {
     this.player.vel.y += this.current_map.gravity.y;
   }
 
-  if (tile.friction) {
-    this.player.vel.x *= tile.friction.x;
-    this.player.vel.y *= tile.friction.y;
+  if (tile.interior_friction) {
+    this.player.vel.x *= tile.interior_friction.x;
+    this.player.vel.y *= tile.interior_friction.y;
+  }
+  if (this.getBelow().friction){
+    this.player.vel.x *= this.getBelow().friction.x;
+    this.player.vel.y *= this.getBelow().friction.x;
   }
   if (this.detectBelow(17)){
     if (this.legacy_map){
