@@ -6,10 +6,10 @@ var Clarity = function () {
   this.tile_size = 16;
   this.limit_viewport = false;
   this.jump_switch = 0;
-  this.allowSpecialJump = true;
+  this.allow_special_jump = true;
   this.deathmsgs = true; // Legacy var, not needed immediately
   this.checkpoint = false;
-  this.legacyMap = true; // Legacy map by default
+  this.legacy_map = true; // Legacy map by default
 
   this.viewport = {
     x: 200,
@@ -48,7 +48,7 @@ var Clarity = function () {
   window.onkeyup = this.keyup.bind(this);
 };
 
-Clarity.prototype.handleLobby = function (players) {
+Clarity.prototype.handle_lobby = function (players) {
   this.current_lobby = players;
 }
 
@@ -116,7 +116,7 @@ Clarity.prototype.load_map = function (map) {
   console.log("Using format Version", map.formatVersion);
   if (map.version >= 2){
     console.log("Using new map format!");
-    this.legacyMap = false;
+    this.legacy_map = false;
   }
 
 
@@ -132,7 +132,7 @@ Clarity.prototype.load_map = function (map) {
   this.current_map.height = 0;
 
 
-  var spawnfound = false;
+  var spawn_found = false;
   var spawnx;
   var spawny;
   map.keys.forEach(function (key) {
@@ -142,9 +142,9 @@ Clarity.prototype.load_map = function (map) {
       _this.current_map.height = Math.max(_this.current_map.height, y);
       
       Array.prototype.forEach.call(row, function (tile, x) {
-        if (_this.legacyMap){
+        if (_this.legacy_map){
           if (tile == 20 || tile.id == 20){
-            spawnfound = true;
+            spawn_found = true;
             spawnx = x;
             spawny = y;
           }
@@ -159,7 +159,7 @@ Clarity.prototype.load_map = function (map) {
   });
 
   if (!this.checkpoint){
-    if (!spawnfound) {
+    if (!spawn_found) {
       this.current_map.player.x = 1
       this.current_map.player.y = 1
     } else {
@@ -291,12 +291,12 @@ Clarity.prototype.move_player = function () {
     this.player.vel.y *= tile.friction.y;
   }
   if (this.detectBelow(17)){
-    if (this.legacyMap){
+    if (this.legacy_map){
       this.player.vel.x *= 1.10; // Legacy Ice Scripts
       this.current_map.vel_limit.x = 12;
     }
   } else {
-    if (this.legacyMap){
+    if (this.legacy_map){
       this.current_map.vel_limit.x = 16;
     }
   }
@@ -464,7 +464,7 @@ Clarity.prototype.move_player = function () {
   }
 
   if (this.last_tile != tile.id && tile.script) {
-    if (this.legacyMap){
+    if (this.legacy_map){
       // Unsecure, needs patches
       console.warn("You're using legacy script format, please update your map!");
       eval(this.current_map.scripts[tile.script]);
@@ -479,8 +479,8 @@ Clarity.prototype.move_player = function () {
 Clarity.prototype.update_player = function () {
 
   if (this.key.left) {
-    if (this.current_map.leftkeyhook){
-      this.current_map.leftkeyhook();
+    if (this.current_map.leftkey_hook){
+      this.current_map.leftkey_hook();
     } else {
       if (this.player.vel.x > -this.current_map.vel_limit.x)
         this.player.vel.x -= this.current_map.movement_speed.left;
@@ -488,23 +488,23 @@ Clarity.prototype.update_player = function () {
   }
 
   if (this.key.right) {
-    if (this.current_map.rightkeyhook){
-      this.current_map.rightkeyhook();
+    if (this.current_map.rightkey_hook){
+      this.current_map.rightkey_hook();
     } else {
       if (this.player.vel.x < this.current_map.vel_limit.x)
-        this.player.vel.x += this.current_map.movement_speed.left;
+        this.player.vel.x += this.current_map.movement_speed.right;
     }
   }
 
   // Legacy walljump scripts ////////////////////////////////
-  if (this.legacyMap) {
+  if (this.legacy_map) {
     if (this.key.up) {
 
       if (this.player.can_jump && this.player.vel.y > -this.current_map.vel_limit.y ) {
         if (this.detectSides(18).result && !this.isGroundSolid()){
 
-          if(this.allowSpecialJump){
-            this.allowSpecialJump = false;
+          if(this.allow_special_jump){
+            this.allow_special_jump = false;
 
             if(this.detectSides(18).side == "left"){
               // Bump player off wall to the right using velocity
@@ -519,8 +519,8 @@ Clarity.prototype.update_player = function () {
         } else {
             if (this.isInside(3) || this.isInside(12)|| this.isInside(14)|| this.isInside(15)){
               
-              if(this.allowSpecialJump){
-                this.allowSpecialJump = false;
+              if(this.allow_special_jump){
+                this.allow_special_jump = false;
 
                 this.player.vel.y -= this.current_map.movement_speed.jump;
               }
@@ -533,20 +533,20 @@ Clarity.prototype.update_player = function () {
         this.player.can_jump = false;
       }
     } else {
-      this.allowSpecialJump = true;
+      this.allow_special_jump = true;
     }
   } else {
     if (this.key.up) {
       if (this.player.can_jump && this.player.vel.y > -this.current_map.vel_limit.y ) {
-        if (this.current_map.jumpHook){
-          this.current_map.jumpHook();
+        if (this.current_map.jump_hook){
+          this.current_map.jump_hook();
         } else {
           this.player.vel.y -= this.current_map.movement_speed.jump;
           this.player.can_jump = false;
         }
       }
     } else {
-      this.allowSpecialJump = true;
+      this.allow_special_jump = true;
     }
   }
   // End legacy scripts /////////////////////////////////////////////////////
@@ -627,7 +627,10 @@ Clarity.prototype.draw = function (context) {
     }
   }
   this.draw_player(context);
-
+  
+  if (this.current_map.draw_hook){
+    this.current_map.draw_hook(context); // Run mapvar draw hook
+  }
 };
 
 const clamp = (num, min, max) => Math.min(Math.max(num, min), max);

@@ -68,10 +68,6 @@ window.walljumpimg = new Image();
 walljumpimg.src =
   "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAAAXNSR0IArs4c6QAAAIFJREFUOE9j/LyJ4T8DBYAR2QAeH+JM+rIFoQ6vATCF6AZjNQCbotM3ITaZqjMw4DIEqwtANoA0OxZDDNjfi2kIzBVYDQBpgGmG+RZdDMMAbAFIszAgGAuEwoCgAYTCgKABsIDDFQYgeYKBCPMG0ekAORYGTxjgylo4A5G4vIiqCgAJh3ZR4vXYPAAAAABJRU5ErkJgggAA";
 
-window.spawnimg = new Image();
-spawnimg.src =
-  "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAAAXNSR0IArs4c6QAAAGZJREFUOE9j5Klm+M9AAWCEGcDTQpopX2og6sEGkKoZZhXIENoYUJWM3Tttc1HFsboApjnXE1Xx5O0QPrIhOA1A1wwzCmTISDEA5GeyAxGkmaJoJCVBUy8lgmwlNT+gZCZSnI2uFgBttFBxn/KikgAAAABJRU5ErkJgggAA";
-
 window.secondaryunlockimg = new Image();
 secondaryunlockimg.src =
   "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAQAAAAEACAYAAABccqhmAAAAAXNSR0IArs4c6QAACRVJREFUeF7t3LFtXEcARdFlqkw9EFANzByLgHpQ5FJYgyL3YICO1YaqcOaUAtzCCy4Gc5zPPu758y9kAeLTy9vzx8N/BAhcKfAkAFc+d1+awP8CAuAiELhYQAAufvi+OgEBcAcIXCwgABc/fF+dgAC4AwQuFhCAix++r05AANwBAhcLCMDFD99XJyAA7gCBiwUE4OKH76sTEAB3gMDFAgJw8cP31QkIgDtA4GIBAbj44fvqBOYAfP7+hSIBApHAv3/9mpYFYOJzmEArIACtv3UCqYAApPzGCbQCAtD6WyeQCghAym+cQCsgAK2/dQKpgACk/MYJtAIC0PpbJ5AKCEDKb5xAKyAArb91AqmAAKT8xgm0AgLQ+lsnkAoIQMpvnEArIACtv3UCqYAApPzGCbQCAtD6WyeQCghAym+cQCsgAK2/dQKpgACk/MYJtAIC0PpbJ5AKCEDKb5xAKyAArb91AqmAAKT8xgm0AgLQ+lsnkAoIQMpvnEArIACtv3UCqYAApPzGCbQCAtD6WyeQCghAym+cQCsgAK2/dQKpgACk/MYJtAIC0PpbJ5AKCEDKb5xAKyAArb91AqmAAKT8xgm0AgLQ+lsnkAoIQMpvnEArIACtv3UCqYAApPzGCbQCAtD6WyeQCghAym+cQCsgAK2/dQKpgACk/MYJtAIC0PpbJ5AKCEDKb5xAKyAArb91AqmAAKT8xgm0AgLQ+lsnkAoIQMpvnEArIACtv3UCqYAApPzGCbQCAtD6WyeQCghAym+cQCsgAK2/dQKpgACk/MYJtAIC0PpbJ5AKCEDKb5xAKyAArb91AqmAAKT8xgm0AgLQ+lsnkAoIQMpvnEArIACtv3UCqYAApPzGCbQCAtD6WyeQCghAym+cQCsgAK2/dQKpgACk/MYJtAIC0PpbJ5AKCEDKb5xAKyAArb91AqmAAKT8xgm0AgLQ+lsnkAoIQMpvnEArIACtv3UCqYAApPzGCbQCAtD6WyeQCghAym+cQCsgAK2/dQKpgACk/MYJtAICMPq/f3ofP2E7/vrf6/YBTl8tIADj4xeAEdDxVEAARn4BGAEdTwUEYOQXgBHQ8VRAAEZ+ARgBHU8FBGDkF4AR0PFUQABGfgEYAR1PBQRg5BeAEdDxVEAARn4BGAEdTwUEYOQXgBHQ8VRAAEZ+ARgBHU8FBGDkF4AR0PFUQABGfgEYAR1PBQRg5BeAEdDxVEAARn4BGAEdTwUEYOQXgBHQ8VTg+gCsL/Df/6TP7/Hta7tvfROof5+DAIy/0EMAthfg9tMC8P1Legf8CSDlv35cAARgegn8L8DElx8WAAGYLqEATHz5YQEQgOkSCsDElx8WAAGYLqEATHz5YQEQgOkSCsDElx8WAAGYLqEATHz5YQEQgOkSCsDElx8WAAGYLqEATHz5YQEQgOkSCsDElx8WAAGYLqEATHz5YQEQgOkSCsDElx8WAAGYLqEATHz5YQEQgOkSCsDElx8WgMMDUD/A0/814/oGrgFc/zn3ul/fH78PYPx9APUDFIAtIQLwawJ8enl7/lg+4bM/ASx8DwGY+B4CIADTDfIngIlvPrz+EVwABGC6hAIw8c2HBWAj9HcA/g5gu0HxaQHYHoAACMB2g+LTArA9AAEQgO0GxacFYHsAAiAA2w2KTwvA9gAEQAC2GxSfFoDtAQiAAGw3KD4tANsDEAAB2G5QfFoAtgcgAAKw3aD4tABsD0AABGC7QfFpAdgegAAIwHaD4tMCsD0AARCA7QbFpwVgewDXB+DPn++T4HoBp/HHY/7XbD/+eF1/hPT8+vzW71/vr/gCIADrHUrP1y9gvb/iC4AArHcoPV+/gPX+ii8AArDeofR8/QLW+yu+AAjAeofS8/ULWO+v+AIgAOsdSs/XL2C9v+ILgACsdyg9X7+A9f6KLwACsN6h9Hz9Atb7K74ACMB6h9Lz9QtY76/4AiAA6x1Kz9cvYL2/4guAAKx3KD1fv4D1/oovAAKw3qH0fP0C1vsrvgAIwHqH0vP1C1jvr/gCIADrHUrP1y9gvb/iC4AArHcoPV+/gPX+ii8AArDeofR8/QLW+yv+9QFYAdcLsO6v/5593Xf+bAEBGJ+fAIyAjqcCAjDyC8AI6HgqIAAjvwCMgI6nAgIw8gvACOh4KiAAI78AjICOpwICMPILwAjoeCogACO/AIyAjqcCAjDyC8AI6HgqIAAjvwCMgI6nAgIw8gvACOh4KiAAI78AjICOpwICMPILwAjoeCogACO/AIyAjqcCAjDyC8AI6HgqIAAjvwCMgI6nAgKQ8hsn0AoIQOtvnUAqIAApv3ECrYAAtP7WCaQCApDyGyfQCghA62+dQCogACm/cQKtgAC0/tYJpAICkPIbJ9AKCEDrb51AKiAAKb9xAq2AALT+1gmkAgKQ8hsn0AoIQOtvnUAqIAApv3ECrYAAtP7WCaQCApDyGyfQCghA62+dQCogACm/cQKtgAC0/tYJpAICkPIbJ9AKCEDrb51AKiAAKb9xAq2AALT+1gmkAgKQ8hsn0AoIQOtvnUAqIAApv3ECrYAAtP7WCaQCApDyGyfQCghA62+dQCogACm/cQKtgAC0/tYJpAICkPIbJ9AKCEDrb51AKiAAKb9xAq2AALT+1gmkAgKQ8hsn0AoIQOtvnUAqIAApv3ECrYAAtP7WCaQCApDyGyfQCghA62+dQCogACm/cQKtgAC0/tYJpAICkPIbJ9AKCEDrb51AKiAAKb9xAq2AALT+1gmkAgKQ8hsn0AoIQOtvnUAqIAApv3ECrYAAtP7WCaQCApDyGyfQCghA62+dQCogACm/cQKtgAC0/tYJpAICkPIbJ9AKCEDrb51AKiAAKb9xAq2AALT+1gmkAgKQ8hsn0AoIQOtvnUAqIAApv3ECrYAAtP7WCaQCeQDSb2+cAIFJ4Onl7flj+gSHCRA4VkAAjn10fnACu4AA7IY+gcCxAgJw7KPzgxPYBQRgN/QJBI4VEIBjH50fnMAuIAC7oU8gcKyAABz76PzgBHYBAdgNfQKBYwUE4NhH5wcnsAsIwG7oEwgcKyAAxz46PziBXUAAdkOfQOBYAQE49tH5wQnsAgKwG/oEAscK/AYC3oRbRZudqgAAAABJRU5ErkJgggAA";
@@ -326,8 +322,7 @@ window.map = {
       solid: 0,
       fore: 1,
       bounce: 0,
-      img: spawnimg,
-      blockname: "Spawn Point"
+      blockname: false
     },
     // Secondary Unlockable Wall
     {
@@ -759,11 +754,11 @@ window.map = {
 	},
   },
 
-  jumpHook: function () {
+  jump_hook: function () {
 	if (game.detectSides(18).result && !game.isGroundSolid()){
 
-		if(game.allowSpecialJump){
-		  game.allowSpecialJump = false;
+		if(game.allow_special_jump){
+		  game.allow_special_jump = false;
 
 		  if(game.detectSides(18).side == "left"){
 			// Bump player off wall to the right using velocity
@@ -778,8 +773,8 @@ window.map = {
   } else {
     if (game.isInside(3) || game.isInside(12)|| game.isInside(14)|| game.isInside(15)){
     
-    if(game.allowSpecialJump){
-      game.allowSpecialJump = false;
+    if(game.allow_special_jump){
+      game.allow_special_jump = false;
 
       game.player.vel.y -= game.current_map.movement_speed.jump;
     }
