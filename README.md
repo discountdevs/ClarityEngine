@@ -211,3 +211,5 @@ python3 -m http.server
 ```
 
 And open up `localhost` in your browser. You're done!
+
+If you want to go further and continue configuring your mapvar, see [here](https://github.com/discountdevs/ClarityEngine/blob/main/docs/mapvar.md).
