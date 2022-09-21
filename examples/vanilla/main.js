@@ -500,7 +500,7 @@ window.map = {
       0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
     ],
     [
-      2, 1, 1, 1, 20, 1, 1, 1, 1, 1, 1, 1, 2, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+      2, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 2, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
       0, 0, 0, 0, 0, 0, 0, 0, 2, 4, 2, 1, 2, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
       0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
     ],
@@ -755,36 +755,46 @@ window.map = {
   },
 
   jump_hook: function () {
-	if (game.detectSides(18).result && !game.isGroundSolid()){
+    if (game.detectSides(18).result && !game.isGroundSolid()){
 
-		if(game.allow_special_jump){
-		  game.allow_special_jump = false;
+      if(game.allow_special_jump){
+        game.allow_special_jump = false;
 
-		  if(game.detectSides(18).side == "left"){
-			// Bump player off wall to the right using velocity
-			game.player.vel.x += game.current_map.movement_speed.jump;
-		  } else {
-			// Same thing, but to the left
-			game.player.vel.x -= game.current_map.movement_speed.jump;
-		  }
-		  game.player.vel.y -= game.current_map.movement_speed.jump;
-  
-		}
-  } else {
-    if (game.isInside(3) || game.isInside(12)|| game.isInside(14)|| game.isInside(15)){
+        if(game.detectSides(18).side == "left"){
+        // Bump player off wall to the right using velocity
+        game.player.vel.x += game.current_map.movement_speed.jump;
+        } else {
+        // Same thing, but to the left
+        game.player.vel.x -= game.current_map.movement_speed.jump;
+        }
+        game.player.vel.y -= game.current_map.movement_speed.jump;
     
-    if(game.allow_special_jump){
-      game.allow_special_jump = false;
-
-      game.player.vel.y -= game.current_map.movement_speed.jump;
-    }
+      }
     } else {
-    game.player.vel.y -= game.current_map.movement_speed.jump;
+      if (game.isInside(3) || game.isInside(12)|| game.isInside(14)|| game.isInside(15)){
+      
+      if(game.allow_special_jump){
+        game.allow_special_jump = false;
+
+        game.player.vel.y -= game.current_map.movement_speed.jump;
+      }
+      } else {
+      game.player.vel.y -= game.current_map.movement_speed.jump;
+      }
+      
     }
-    
-  }
 	  
 	  game.player.can_jump = false;
+  },
+
+  update_hook: function(){
+    if (game.detectSides(18).result){
+      if (game.detectSides(18).side == "left" && game.key.left){
+        game.player.vel.y *= 0.8;
+      } else if (game.detectSides(18).side == "right" && game.key.right){
+        game.player.vel.y *= 0.8;
+      }      
+    }
   },
 
   background: "#222",

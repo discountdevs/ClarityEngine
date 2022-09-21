@@ -137,3 +137,9 @@ if (this.player.vel.x < this.current_map.vel_limit.x)
 
  - ### `draw_hook`
 A hook that runs after the default `game.draw` function. It is passed the canvas `context`. Feel free to use this to draw on any additional features you need in the game.
+
+ - ### `update_hook`
+Runs a function on each frame in the `update_player` function. Used generally to add additional player movement mechanics.
+
+ - ### `keydown_hook`
+Runs a function on the window's `onkeydown` event. Passes in the key code.

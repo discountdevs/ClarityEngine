@@ -22,3 +22,12 @@ Your `game` object contains several attributes that can be modified. The followi
  - `player` - Defines the player's location, velocity, jump state, grounded state, and colour.
  - `current_map` - Holds the current mapvar.
  - `last_tile` - An internal variable used to map the last rendered tile.
+
+## Functions
+ - `Clarity()` - Constructs a new instance of the Clarity Engine.
+ - `handle_lobby()` - A legacy function that handles setting the lobby after recieving it from the socket.io server.
+ - `error(str message)` - Throws an error.
+ - `log(str message)` - Logs a message.
+ - `set_viewport(float x, float y)` - Sets the rendered canvas viewport.
+ - `keydown(KeyboardEvent e)` - A function bound to the window onkeydown event.
+ - 
