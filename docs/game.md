@@ -30,4 +30,3 @@ Your `game` object contains several attributes that can be modified. The followi
  - `log(str message)` - Logs a message.
  - `set_viewport(float x, float y)` - Sets the rendered canvas viewport.
  - `keydown(KeyboardEvent e)` - A function bound to the window onkeydown event.
- - 
