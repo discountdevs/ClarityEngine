@@ -11,6 +11,9 @@ var Clarity = function () {
   this.checkpoint = false;
   this.legacy_map = true; // Legacy map by default
 
+  // FPS
+  this.fps = 0;
+
   this.viewport = {
     x: 200,
     y: 200
@@ -54,8 +57,8 @@ Clarity.prototype.handle_lobby = function (players) {
 
 Clarity.prototype.error = function (message) {
   if (this.alert_errors) alert(message);
-  if (this.log_info) console.log("%c[Clarity] Error!: " + message, "color: #8a0000");
-  if (this.log_info) this.log("that didnt look very good :|");
+  if (this.log_info) console.log("%c[Clarity] Error!: " + message, "color: #FF0000");
+  if (this.log_info) this.log("If this error occurs frequently, send a report: https://discord.gg/FbEJ2DyGME");
 };
 
 Clarity.prototype.log = function (message) {
@@ -82,7 +85,7 @@ Clarity.prototype.keydown = function (e) {
       break;
   }
 
-  if (this.current_map.keydown_hook){
+  if (this.current_map.keydown_hook) {
     this.current_map.keydown_hook(e.keyCode);
   }
 };
@@ -114,12 +117,28 @@ Clarity.prototype.load_map = function (map) {
     return false;
   }
 
-  this.log("Using format Version", map.formatVersion);
+  this.log("Using format version", map.version);
   if (map.version >= 2) {
     this.log("Using new map format!");
     this.legacy_map = false;
   }
 
+  // Process texture data
+  if (!this.legacy_map) {
+    this.textures = {};
+    this.player_img = null;
+
+    if (map.textures) {
+      for (const texture in map.textures) {
+        this.textures[texture] = new Image();
+        this.textures[texture].src = map.textures[texture];
+      }
+    }
+    if (map.player_img) {
+      this.player_img = new Image();
+      this.player_img.src = map.player_img;
+    }
+  }
 
   this.current_map = map;
 
@@ -162,17 +181,18 @@ Clarity.prototype.load_map = function (map) {
     });
   });
 
-  if (!this.checkpoint) {
-    if (!spawn_found) {
-      this.current_map.player.x = 1
-      this.current_map.player.y = 1
-    } else {
-      this.current_map.player.x = spawnx;
-      this.current_map.player.y = spawny;
+  if (this.legacy_map) {
+    if (!this.checkpoint) {
+      if (!spawn_found) {
+        this.current_map.player.x = 1
+        this.current_map.player.y = 1
+      } else {
+        this.current_map.player.x = spawnx;
+        this.current_map.player.y = spawny;
+      }
     }
   }
-
-
+  
   this.current_map.width_p = this.current_map.width * this.tile_size;
   this.current_map.height_p = this.current_map.height * this.tile_size;
 
@@ -205,7 +225,6 @@ Clarity.prototype.draw_tile = function (x, y, tile, context) {
 
   if (!tile || !tile.colour) return;
   if (!tile.img) {
-    // this.log("no image!")
     context.fillStyle = tile.colour;
     context.fillRect(
       x,
@@ -214,7 +233,11 @@ Clarity.prototype.draw_tile = function (x, y, tile, context) {
       this.tile_size
     );
   } else {
-    ctx.drawImage(tile.img, x, y, this.tile_size, this.tile_size);
+    if (this.legacy_map) {
+      context.drawImage(tile.img, x, y, this.tile_size, this.tile_size);
+    } else {
+      context.drawImage(this.textures[tile.img], x, y, this.tile_size, this.tile_size);
+    }
   }
 
 
@@ -268,21 +291,23 @@ Clarity.prototype.move_player = function () {
     Math.round(this.player.loc.y / this.tile_size)
   );
 
-  if (tile.boost && !this.universalSpeed) {
-    this.current_map.movement_speed.left = 1;
-    this.current_map.movement_speed.right = 1;
-  } else if (!this.universalSpeed) {
-    this.current_map.movement_speed = {
-      jump: 6,
-      left: 0.3,
-      right: 0.3
-    };
-  } else if (this.universalSpeed) {
-    this.current_map.movement_speed = {
-      jump: 10,
-      left: 10,
-      right: 10
-    };
+  if (this.legacy_map){
+    if (tile.boost && !this.universalSpeed) {
+      this.current_map.movement_speed.left = 1;
+      this.current_map.movement_speed.right = 1;
+    } else if (!this.universalSpeed) {
+      this.current_map.movement_speed = {
+        jump: 6,
+        left: 0.3,
+        right: 0.3
+      };
+    } else if (this.universalSpeed) {
+      this.current_map.movement_speed = {
+        jump: 10,
+        left: 10,
+        right: 10
+      };
+    }
   }
 
 
@@ -576,19 +601,33 @@ Clarity.prototype.update_player = function () {
 
 Clarity.prototype.draw_player = function (context) {
 
-  context.fillStyle = this.player.colour;
+  if (this.current_map.player_img) {
+    var img = this.player_img;
+    // Draw it to the screen
+    context.drawImage(img,
+      this.player.loc.x + this.tile_size / 2 - this.camera.x - this.tile_size / 2,
+      this.player.loc.y + this.tile_size / 2 - this.camera.y - this.tile_size / 2,
+      this.tile_size,
+      this.tile_size
+    );
+  } else {
+    context.fillStyle = this.player.colour;
 
-  context.beginPath();
+    context.beginPath();
 
-  context.arc(
-    this.player.loc.x + this.tile_size / 2 - this.camera.x,
-    this.player.loc.y + this.tile_size / 2 - this.camera.y,
-    this.tile_size / 2 - 1,
-    0,
-    Math.PI * 2
-  );
+    context.arc(
+      this.player.loc.x + this.tile_size / 2 - this.camera.x,
+      this.player.loc.y + this.tile_size / 2 - this.camera.y,
+      this.tile_size / 2 - 1,
+      0,
+      Math.PI * 2
+    );
 
-  context.fill();
+    context.fill();
+  }
+
+
+
 
   if (this.debug) {
     context.strokeRect(
@@ -596,7 +635,7 @@ Clarity.prototype.draw_player = function (context) {
       this.player.loc.y + this.tile_size / 2 - this.camera.y - this.tile_size / 2,
       this.tile_size,
       this.tile_size
-    )
+    );
   }
 };
 
@@ -638,6 +677,9 @@ Clarity.prototype.update = function () {
 };
 
 Clarity.prototype.draw = function (context) {
+  // Calculate FPS
+  this.fps = Math.round(1000 / (performance.now() - this.last_update));
+  this.last_update = performance.now();
 
   this.draw_map(context, false);
   var _this = this;
@@ -652,14 +694,23 @@ Clarity.prototype.draw = function (context) {
   if (this.current_map.draw_hook) {
     this.current_map.draw_hook(context); // Run mapvar draw hook
   }
+
+  // Display FPS
+  context.fillStyle = "#fff";
+  context.font = "12px Arial";
+  context.fillText(
+    "FPS: " + this.fps,
+    20,
+    20
+  );
 };
 
 const clamp = (num, min, max) => Math.min(Math.max(num, min), max);
 
 Clarity.prototype.detectBelow = function (id) {
   var map = this.current_map.data;
-  var playerX = Math.round(this.player.loc.x / 16);
-  var playerY = Math.round(this.player.loc.y / 16);
+  var playerX = Math.round(this.player.loc.x / this.tile_size);
+  var playerY = Math.round(this.player.loc.y / this.tile_size);
 
   if (playerY >= map.length - 1 || playerX >= map.length) {
     return false;
@@ -675,8 +726,8 @@ Clarity.prototype.detectBelow = function (id) {
 
 Clarity.prototype.detectSides = function (id) {
   var map = this.current_map.data;
-  var playerX = Math.round(this.player.loc.x / 16);
-  var playerY = Math.round(this.player.loc.y / 16);
+  var playerX = Math.round(this.player.loc.x / this.tile_size);
+  var playerY = Math.round(this.player.loc.y / this.tile_size);
 
   if (playerY >= map.length - 1 || playerX >= map.length - 1) {
     return false;
@@ -732,14 +783,12 @@ Clarity.prototype.detectSides = function (id) {
       };
     }
   }
-
-
 }
 
 Clarity.prototype.isInside = function (id) {
   var map = this.current_map.data;
-  var playerX = Math.round(this.player.loc.x / 16);
-  var playerY = Math.round(this.player.loc.y / 16);
+  var playerX = Math.round(this.player.loc.x / this.tile_size);
+  var playerY = Math.round(this.player.loc.y / this.tile_size);
   if (playerY >= map.length || playerX >= map.length) {
     return false;
   } else if (playerY < 0 || playerX < 0) {
@@ -753,8 +802,8 @@ Clarity.prototype.isInside = function (id) {
 
 Clarity.prototype.getBelow = function () {
   var map = this.current_map.data;
-  var playerX = Math.round(this.player.loc.x / 16);
-  var playerY = Math.round(this.player.loc.y / 16);
+  var playerX = Math.round(this.player.loc.x / this.tile_size);
+  var playerY = Math.round(this.player.loc.y / this.tile_size);
 
   if (playerY >= map.length - 1 || playerX >= map.length) {
     return false;
