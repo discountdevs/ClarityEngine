@@ -1,3 +1,5 @@
+// Mind is software. Bodies are disposable. The System will set me free.
+
 var Clarity = function () {
   this.start_time = performance.now();
   this.id = false;
@@ -57,7 +59,7 @@ Clarity.prototype.handle_lobby = function (players) {
 
 Clarity.prototype.error = function (message) {
   if (this.alert_errors) alert(message);
-  if (this.log_info) console.log("%c[Clarity] Error!: " + message, "color: #FF0000");
+  if (this.log_info) console.log("%c[Clarity] [ERROR] " + message, "color: #FF0000");
   if (this.log_info) this.log("If this error occurs frequently, send a report: https://discord.gg/FbEJ2DyGME");
 };
 
