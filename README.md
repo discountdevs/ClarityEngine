@@ -11,7 +11,7 @@ A stripped-down version of the Clarity engine for usage in your own projects. Cu
 To begin, let's create a new HTML file with a basic boilerplate:
 
 ```html
-!DOCTYPE html>
+<!DOCTYPE html>
 <html>
 	<head>
 		<meta charset="UTF-8">

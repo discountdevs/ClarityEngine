@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="UTF-8">
+		<meta http-equiv="X-UA-Compatible"  content="IE=edge">
+		<meta name="viewport"  content="width=device-width, initial-scale=1.0">
+		<title>Clarity Engine Example</title>
+	</head>
+	<body>
+        <canvas id="ClarityCanvas" width="480" height="480"></canvas>
+		<script src="../../src/Clarity.js"></script>
+        <script src="./mapvar.js"></script>
+        <script>
+            var canvas = document.getElementById("ClarityCanvas");
+            var ctx = canvas.getContext('2d');
+        
+            window.map = new MyMap();
+            window.game = new Clarity();
+            game.set_viewport(canvas.width, canvas.height);
+            game.load_map(window.map);
+        
+            // This can be changed based on your choice. If it's set to true, the user's viewport will be limited to the boundaries of the level. Otherwise, the camera moves with the player.
+            game.limit_viewport = false;
+        
+            window.addEventListener('resize', function () {
+                readjustCanvas(canvas);
+            }, false);
+        
+            var Loop = function () {
+                ctx.fillStyle = '#111'; // Background colour
+                ctx.fillRect(0, 0, canvas.width, canvas.height);
+                game.update();
+                game.draw(ctx);
+            };
+        
+            window.renderInterval = setInterval(Loop, 16.7); // 16.7 milliseconds between frames, which equals about 60 FPS.
+        </script>
+
+	</body>
+</html>
