@@ -22,11 +22,34 @@ Your `game` object contains several attributes that can be modified. The followi
  - `player` - Defines the player's location, velocity, jump state, grounded state, and colour.
  - `current_map` - Holds the current mapvar.
  - `last_tile` - An internal variable used to map the last rendered tile.
+ - `fps` - The current FPS of the game
+ - `delta_time` - The current delta time of the game (time in seconds between frames). You can use this in some interesting ways. For instance, if you want to animate an object moving at 100 pixels per second, you can use this formula to calculate the amount of movement required on a given frame: `game.delta_time * 100`.
 
 ## Functions
  - `Clarity()` - Constructs a new instance of the Clarity Engine.
  - `handle_lobby()` - A legacy function that handles setting the lobby after recieving it from the socket.io server.
- - `error(str message)` - Throws an error.
- - `log(str message)` - Logs a message.
- - `set_viewport(float x, float y)` - Sets the rendered canvas viewport.
- - `keydown(KeyboardEvent e)` - A function bound to the window onkeydown event.
+ - `error(message)` - Throws an error.
+ - `log(message)` - Logs a message.
+ - `set_viewport(x, y)` - Sets the rendered canvas viewport.
+ - `keydown(e)` - A function bound to the window onkeydown event.
+ - `keyup(e)` - A function bound to the window onkeyup event.
+ - `load_map(map)` - Loads a given map object - if using v2 maps, should be an instanciated `Mapvar()`.
+ - `get_tile(x, y)` - Returns the tile at the specified location in the currently loaded map. Contains a full copy of the tile's data (texture, stats, etc.)
+ - `draw_tile(x, y, tile, context)` - Internally used in the `draw()` function. Draws a given tile at the given location on the given canvas context.
+ - `draw_map(context, fore)` - Draws the map on the given context, calls `draw_tile` repeatedly. `fore` is used as a recursive flag for whether or not this pass is drawing on the foreground - tiles with the `fore` attribute.
+ - `move_player()` - Handles the physics of default player movement - gravity, friction, player input, delta_time adjustments, etc. Also handles embedded tile scripts.
+ - `update_player()` - Sets velocity based on input, then calls `move_player`.
+ - `draw_player(context)` - Draws the player on the given context, either with a typical cirle or with the player image.
+ - `draw_other_player(context, x, y, username)` - Leftover from legacy multiplayer, draws another player with text above it specifying username.
+ - `update()` - Literally just calculates deltatime, fps, and calls `update_player()`. If you need to hook some function into this, use the mapvar attribute `update_hook()`.
+ - `draw(context)` - Calls `draw_map`, `draw_player`, `draw_other_player`, the current mapvar's `draw_hook`, and displays the current FPS in the top left corner of the screen.
+ - `detectBelow(id)` - Returns `true` if the player is standing on the passed id, `false` otherwise. Assumes normal gravity - non-standard gravity could cause glitches.
+ - `detectSides(id)` - returns an object like: `{result: true, side: "right"}` - `side` can be `right` or `left`, result is a boolean. Checks for the given id on the sides of the player's position, mostly used for the walljump block.
+ - `isInside(id)` - Returns `true` if the player is currently inside the given id, `false` otherwise.
+ - `getBelow()` - Returns the current tile object the player is standing on.
+ - `isGroundSolid()` - Returns true if the ground is solid, false otherwise.
+ 
+ ## Non-Game Functions
+ General utility functions that you can call in your mapvar
+ - `clamp(num, min, max)` - Clamps a value between the specified minimum and maximum.
+ 
